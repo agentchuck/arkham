@@ -18,7 +18,7 @@ OFILES := $(OBJFILES:%=obj/%.o)
 BINFILE = arkham
 
 COMMONFLAGS = -Wall -Wextra -pedantic
-LDFLAGS =
+LDFLAGS = -lboost_program_options
 
 ifdef DEBUG
 	COMMONFLAGS := $(COMMONFLAGS) -g
