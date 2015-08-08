@@ -1,6 +1,7 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include <stdint.h>
 #include <vector>
 
 using namespace std;
@@ -25,6 +26,8 @@ class Unit {
     int dir;
 
     Unit();
+    // Need a copy constructor
+    Unit(const Unit &obj);
 
     void print();
 };
@@ -32,11 +35,30 @@ class Unit {
 class Board {
   // AKA the Honeycomb
   public:
-    Board();
+    vector< vector < bool > > c;
+    size_t w;
+    size_t h;
+
+    Board(size_t width, size_t height);
     // Need a copy constructor
     Board(const Board &obj);
 
+    void resize(size_t width, size_t height);
+
     void print();
+};
+
+class World {
+  public:
+    Board board;
+    vector< Unit > units;
+    vector< uint32_t > seeds;
+    int id;
+    int sourcelength;
+
+    World();
+
+    int import(const char *filename);
 };
 
 #endif

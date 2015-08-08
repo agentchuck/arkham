@@ -86,6 +86,22 @@ int main(int argc, char **argv)
     }
   }
 
+  /*
   readFile(inputfile.c_str());
+
+  Board myBoard(10,10);
+  myBoard.c[5][5] = true;
+  myBoard.print();
+
+  Board myOtherBoard(myBoard);
+  myOtherBoard.c[6][6] = true;
+  myOtherBoard.print();
+
+  myBoard.print();
+  */
+
+  World wld;
+  wld.import(inputfile.c_str());
+
   return 0;
 }
