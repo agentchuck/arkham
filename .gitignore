@@ -29,3 +29,8 @@
 *.out
 *.app
 arkham
+
+
+# Extra stuff
+board.txt
+unit.txt

@@ -9,14 +9,17 @@ Forbidden researches of the old ones
  - Watch for failure/replicated states
 2. For each endpoint, determine optimal score. Try to use power phrases.
 3. For each endpoint, restart from 1.
+4. Coordinate over multiple units to maximize line clears over multiple turns.
+   (Yeah... ok...)
 
 # Phrases of power
 - Notes...
   Seem to be lovecraftian, probably also related to FP.
   Need final punctuation? Would satisfy 51 characters with chant...
-  Can they be nested? Liekly not.
+  Can they be nested? Likely not.
   18 phrases between 3 and 51 characters in length.
   Look in the sample problems.
+  Need non-trivial sample problems to test rotations.
 
 - Known:
 ei!  E, SW, W -> Translates to SW.
@@ -31,6 +34,13 @@ Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn - Famous HPL reference
 
 yuggoth - From map 7
  - E, CCW, SW, SW, SE, CCW, SW
+
+1a! 1a! - From map 3
+ - CW, SW, W, SE, CW, SW, W
+
+R'lyeh - From map 5
+ - CW, W, SE, E, E, SW
+
 
 
 # Output format:

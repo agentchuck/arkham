@@ -6,11 +6,14 @@ namespace po = boost::program_options;
 #include <iterator>
 using namespace std;
 
+#include "parser.hpp"
 
 int timelimit;
 int memorylimit;
 int cores;
+int rngTest;
 vector< string > phrases;
+string inputfile;
 
 
 uint32_t numberFromSeed(uint32_t seed) {
@@ -24,8 +27,9 @@ uint32_t iterateRNG(uint32_t seed) {
   return temp & 0xffffffff;
 }
 
-void testRNG(uint32_t seed) {
-  for(int i = 0; i < 10; i++) {
+void testRNG(uint32_t seed, size_t count) {
+  cerr << "First " << count << " elements of seed: " << seed << endl;
+  for(size_t i = 0; i < count; i++) {
     cout << numberFromSeed(seed) << endl;
     seed = iterateRNG(seed);
   }
@@ -37,11 +41,13 @@ int main(int argc, char **argv)
   po::options_description desc("Allowed options");
   desc.add_options()
       ("help", "produce help message")
-      ("filename,f", po::value< string >(), "File containing JSON encoded input")
+      ("filename,f", po::value< string >(&inputfile), "File containing JSON encoded input")
       ("timelimit,t", po::value< int >(&timelimit)->default_value(60),
           "Time limit, in seconds, to produce output")
       ("memory,m", po::value< int >(&memorylimit)->default_value(1000),
           "Memory limit, in megabytes, to produce output")
+      ("rng,r", po::value< int >(&rngTest)->default_value(-1),
+          "RNG test seed")
       ("cores,c", po::value< int >(&memorylimit)->default_value(1),
           "Available cores for computation")
       ("phrase,p", po::value< vector<string> >(&phrases), "Phrase of power, as quoted string")
@@ -54,6 +60,11 @@ int main(int argc, char **argv)
   if (vm.count("help")) {
       cout << desc << "\n";
       return 1;
+  }
+
+  if (rngTest >= 0) {
+    testRNG(rngTest, 100);
+    return 0;
   }
 
   if (vm.count("filename") == 1) {
@@ -74,7 +85,6 @@ int main(int argc, char **argv)
     }
   }
 
-  testRNG(17);
-
+  readFile(inputfile.c_str());
   return 0;
 }
