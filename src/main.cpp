@@ -9,7 +9,27 @@ using namespace std;
 
 int timelimit;
 int memorylimit;
+int cores;
 vector< string > phrases;
+
+
+uint32_t numberFromSeed(uint32_t seed) {
+  // The random number associated with a seed consists of bits 30..16 of that seed
+  return (seed >> 16) & 0x7fff;
+}
+
+uint32_t iterateRNG(uint32_t seed) {
+  uint64_t temp = uint64_t(seed) * uint64_t(1103515245);
+  temp += 12345;
+  return temp & 0xffffffff;
+}
+
+void testRNG(uint32_t seed) {
+  for(int i = 0; i < 10; i++) {
+    cout << numberFromSeed(seed) << endl;
+    seed = iterateRNG(seed);
+  }
+}
 
 int main(int argc, char **argv)
 {
@@ -22,6 +42,8 @@ int main(int argc, char **argv)
           "Time limit, in seconds, to produce output")
       ("memory,m", po::value< int >(&memorylimit)->default_value(1000),
           "Memory limit, in megabytes, to produce output")
+      ("cores,c", po::value< int >(&memorylimit)->default_value(1),
+          "Available cores for computation")
       ("phrase,p", po::value< vector<string> >(&phrases), "Phrase of power, as quoted string")
   ;
 
@@ -51,5 +73,8 @@ int main(int argc, char **argv)
       cout << phrases[word] << endl;
     }
   }
+
+  testRNG(17);
+
   return 0;
 }

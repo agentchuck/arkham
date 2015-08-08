@@ -29,6 +29,9 @@ cthulhu - Hint in spec
  - E, CCW, SW, CCW, SE, SW, CCW
 Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn - Famous HPL reference
 
+yuggoth - From map 7
+ - E, CCW, SW, SW, SE, CCW, SW
+
 
 # Output format:
 [ { "problemId": number   /* The `id` of the game configuration */
@@ -40,7 +43,9 @@ Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn - Famous HPL reference
 
 # Submission:
 export API_TOKEN=Td/Cz+QybNRt/9poXn2R2W2WOLB9nYXtwwUlK+N5Erg=
-    curl --user :$API_TOKEN -X POST -H "Content-Type: application/json" \
+export TEAM_ID=152
+
+curl --user :$API_TOKEN -X POST -H "Content-Type: application/json" \
         -d $OUTPUT \
         https://davar.icfpcontest.org/teams/$TEAM_ID/solutions
 
