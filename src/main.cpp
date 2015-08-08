@@ -7,6 +7,7 @@ namespace po = boost::program_options;
 using namespace std;
 
 #include "parser.hpp"
+#include "world.hpp"
 
 int timelimit;
 int memorylimit;
