@@ -3,9 +3,20 @@
 #include <iostream>
 #include <bits/stdc++.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <iostream>
 
 #include "parser.hpp"
+
+void jsonOutput(int id, int seed, string commands, ostream& out)
+{
+  out << "[ { \"problemId\": " << id << endl;
+  out << "  , \"seed\": " << seed << endl;
+  out << "  , \"tag\": \"" << id << ":" << seed << "-1\"" << endl;
+  out << "  , \"solution\": \"" << commands << "\"" << endl;
+  out << "  }" << endl;
+  out << "]" << endl;
+}
 
 act_cmd charToCmd(char inch) {
   act_cmd cmd=idle;
@@ -595,10 +606,12 @@ Board::print(ostream& os) const
 
 
 World::World()
-  : board(0,0),
+  : initialBoard(0,0),
+    board(0,0),
     id(0),
     sourcelength(0),
     currentSource(0),
+    initialSeed(0),
     seed(0)
 {
 }
@@ -746,8 +759,8 @@ World::import(const char *filename)
        fclose(fp);
   }
 
-   return 0;
-
+  initialBoard = board;
+  return 0;
 }
 
 size_t
@@ -776,3 +789,56 @@ World::actNextUnit() {
   return true;
 }
 
+void
+World::runAll()
+{
+  for (int rnum = 0; rnum < seeds.size(); rnum++) {
+    // Reset the state
+    initialSeed = seeds[rnum];
+    board = initialBoard;
+
+    string commands;
+
+    // Run as many units as possible
+    bool done(false);
+    do {
+      if (!actNextUnit()) {
+        // Source is empty.
+        break;
+      }
+      if (!board.val(activeUnit)) {
+        // Board is full.
+        break;
+      }
+
+      bool innerdone = false;
+      do {
+      fstream outputfile("board.txt", ios_base::out);
+      board.print(outputfile);
+      outputfile.close();
+
+        // Mark I - Get something done.
+        // Try to go SE. If can't, then go W.
+        Unit test(activeUnit);
+        test.se();
+        if (board.val(test)) {
+          board.doAct(s_east);
+          commands += 'm';
+        } else {
+          board.doAct(west);
+          commands += '0';
+        }
+
+        if (board.au == nullptr) {
+          break;
+        } else {
+          usleep(100000);
+        }
+      } while (!innerdone);
+    } while (!done);
+
+
+    // Dump the output
+    jsonOutput(id, seeds[rnum], commands, std::cout);
+  }
+}

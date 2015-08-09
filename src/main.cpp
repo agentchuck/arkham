@@ -15,6 +15,7 @@ int memorylimit;
 int cores;
 int rngTest;
 int runSeed = -1;
+int interactive = -1;
 vector< string > phrases;
 string inputfile;
 
@@ -36,6 +37,7 @@ int main(int argc, char **argv)
           "Available cores for computation")
       ("phrase,p", po::value< vector<string> >(&phrases), "Phrase of power, as quoted string")
       ("seed,s", po::value< int >(&runSeed), "Run a specific seed")
+      ("interactive,i", po::value< int >(&interactive), "Run interactive")
   ;
 
   po::variables_map vm;
@@ -123,6 +125,7 @@ int main(int argc, char **argv)
     runSeed = wld.seeds[0];
 
   }
+  wld.initialSeed = runSeed;
   wld.seed = runSeed;
 
   cout << "Running seed: " << runSeed << endl;
@@ -160,33 +163,39 @@ int main(int argc, char **argv)
 #endif
 
 
-  int inch = -1;
-  string runCommands;
-  do {
-    if (wld.board.au == nullptr) {
-      if (!wld.actNextUnit()) {
-        // Source is empty.
-        break;
-      }
-      if (!wld.board.val(wld.activeUnit)) {
-        // Board is full.
-        break;
-      }
-    }
-    fstream outputfile("board.txt", ios_base::out);
-    wld.board.print(outputfile);
-    outputfile.close();
-    inch = getchar();
-    if (inch > 0) {
-      act_cmd cmd = charToCmd(inch);
-      if (cmd != idle) {
-        runCommands.push_back(inch);
-      }
-      wld.board.doAct(cmd);
-    }
-  } while (inch > 0);
+  if (interactive == 1) {
+    int inch = -1;
+    string runCommands;
+    do {
 
-  cerr << "Ran command string: " << runCommands << endl;
+      if (wld.board.au == nullptr) {
+        if (!wld.actNextUnit()) {
+          // Source is empty.
+          break;
+        }
+        if (!wld.board.val(wld.activeUnit)) {
+          // Board is full.
+          break;
+        }
+      }
+      fstream outputfile("board.txt", ios_base::out);
+      wld.board.print(outputfile);
+      outputfile.close();
+      inch = getchar();
+      if (inch > 0) {
+        act_cmd cmd = charToCmd(inch);
+        if (cmd != idle) {
+          runCommands.push_back(inch);
+        }
+        wld.board.doAct(cmd);
+      }
+    } while (inch > 0);
+
+    jsonOutput(wld.id, wld.initialSeed, runCommands, std::cerr);
+    //cerr << "Ran command string: " << runCommands << endl;
+  } else {
+    wld.runAll();
+  }
 
   return 0;
 }

@@ -38,10 +38,6 @@ yuggoth - From map 7
 - Possible:
 ph'nglui mglw'nafh cthulhu r'lyeh wgah'nagl fhtagn - Famous HPL reference
 
-bigboote - From twitter
-
-Eris - Tenth planet
-
 - Wrong:
 davar - From postmortem 
  - CW, SW, CW, SW, CW
@@ -52,6 +48,10 @@ cthulhu - Hint in spec
 
 R'lyeh - From map 5
  - CW, W, SE, E, E, SW
+
+bigboote - From twitter
+
+Eris - Tenth planet
 
 # Output format:
 [ { "problemId": number   /* The `id` of the game configuration */

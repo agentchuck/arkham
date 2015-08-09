@@ -10,6 +10,8 @@ using namespace std;
 
 typedef std::pair<int32_t, int32_t> pii;
 
+void jsonOutput(int id, int seed, string commands, ostream& out);
+
 enum act_cmd
 {
   idle,
@@ -118,6 +120,7 @@ class Board {
 
 class World {
   public:
+    Board initialBoard;
     Board board;
     vector< Unit > units;
     Unit activeUnit;
@@ -126,6 +129,7 @@ class World {
     int sourcelength;
     int currentSource;
 
+    int initialSeed;
     int seed;
 
     World();
@@ -134,6 +138,8 @@ class World {
     size_t nextUnit();
     // Returns false if over the source limit size.
     bool actNextUnit();
+
+    void runAll();
 };
 
 #endif
