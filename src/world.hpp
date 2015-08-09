@@ -1,12 +1,27 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
+#include <ostream>
+#include <iostream>
 #include <stdint.h>
 #include <vector>
 
 using namespace std;
 
 typedef std::pair<int32_t, int32_t> pii;
+
+enum act_cmd
+{
+  idle,
+  east,
+  west,
+  s_east,
+  s_west,
+  rotate_cw,
+  count_rotate
+};
+
+act_cmd charToCmd(char inch);
 
 enum Dir {
   Normal = 0,
@@ -80,6 +95,7 @@ class Unit {
 class Board {
   // AKA the Honeycomb
   public:
+    // Note that it is indexed as c[y-val][x-val]
     vector< vector < bool > > c;
     size_t w;
     size_t h;
@@ -89,9 +105,15 @@ class Board {
     // Need a copy constructor
     Board(const Board &obj);
 
-    void resize(size_t width, size_t height);
+    // Freeze the au in place
+    void lock();
 
-    void print() const;
+    void doAct(act_cmd cmd);
+    void clearrows();
+    void resize(size_t width, size_t height);
+    bool val(const Unit &ut) const;
+
+    void print(ostream& os = std::cout) const;
 };
 
 class World {

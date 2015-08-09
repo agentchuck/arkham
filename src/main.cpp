@@ -3,6 +3,7 @@
 namespace po = boost::program_options;
 
 #include <iostream>
+#include <fstream>
 #include <iterator>
 using namespace std;
 
@@ -148,7 +149,6 @@ int main(int argc, char **argv)
     }
     rotunit.rotate(true);
   }
-#endif
 
   cout << "Board with no units\n";
   wld.board.print();
@@ -157,6 +157,23 @@ int main(int argc, char **argv)
     wld.board.au = &wld.units[cnt];
     wld.board.print();
   }
+#endif
+
+
+  int inch = -1;
+  do {
+    if (wld.board.au == nullptr) {
+      wld.actNextUnit();
+    }
+    fstream outputfile("board.txt", ios_base::out);
+    wld.board.print(outputfile);
+    outputfile.close();
+    inch = getchar();
+    if (inch > 0) {
+      act_cmd cmd = charToCmd(inch);
+      wld.board.doAct(cmd);
+    }
+  } while (inch > 0);
 
   wld.actNextUnit();
 

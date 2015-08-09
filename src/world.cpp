@@ -7,6 +7,67 @@
 
 #include "parser.hpp"
 
+act_cmd charToCmd(char inch) {
+  act_cmd cmd=idle;
+  switch (inch)
+  {
+    case 'b':
+    case 'c':
+    case 'e':
+    case 'f':
+    case 'y':
+    case '2':
+      cmd=east;
+      break;
+    case 'p':
+    case '\'':
+    case '!':
+    case '.':
+    case '0':
+    case '3':
+      cmd=west;
+      break;
+    case 'a':
+    case 'g':
+    case 'h':
+    case 'i':
+    case 'j':
+    case '4':
+      cmd=s_west;
+      break;
+    case 'l':
+    case 'm':
+    case 'n':
+    case 'o':
+    case ' ':
+    case '5':
+      cmd=s_east;
+      break;
+    case 'd':
+    case 'q':
+    case 'r':
+    case 'v':
+    case 'z':
+    case '1':
+      cmd=rotate_cw;
+      break;
+    case 'k':
+    case 's':
+    case 't':
+    case 'u':
+    case 'w':
+    case 'x':
+      cmd=count_rotate;
+      break; 
+    default: 
+      break;
+  }  
+
+  return cmd;
+}
+
+
+
 uint32_t numberFromSeed(uint32_t seed) {
   // The random number associated with a seed consists of bits 30..16 of that seed
   return (seed >> 16) & 0x7fff;
@@ -376,6 +437,69 @@ Board::Board(const Board &obj)
 }
 
 void
+Board::lock()
+{
+  if (au == nullptr) {
+    // nothing to do with no active unit
+    return;
+  }
+
+  for (size_t cnt = 0; cnt < au->subunits.size(); cnt++) {
+    const pii &sub = au->subunits[cnt];
+    c[sub.second][sub.first] = true;
+  }
+
+  // Now there is no active unit.
+  au = nullptr;
+}
+
+void
+Board::doAct(act_cmd cmd) {
+  if (au == nullptr) {
+    // nothing to do with no active unit
+    return;
+  }
+
+  // Copy the active unit and do the action with it.
+  Unit testUnit(*au);
+  switch(cmd) {
+    case east:
+      testUnit.e();
+      break;
+    case west:
+      testUnit.w();
+      break;
+    case s_east:
+      testUnit.se();
+      break;
+    case s_west:
+      testUnit.sw();
+      break;
+    case rotate_cw:
+      testUnit.rotate(true);
+      break;
+    case count_rotate:
+      testUnit.rotate(false);
+      break;
+    default:
+      return;
+  }
+  // If the new position is valid then execute it. Otherwise lock the au.
+  if (val(testUnit)) {
+    *au = testUnit;
+  } else {
+    lock();
+  }
+
+}
+
+
+void
+Board::clearrows()
+{
+}
+
+void
 Board::resize(size_t width, size_t height)
 {
     c.clear();
@@ -388,14 +512,36 @@ Board::resize(size_t width, size_t height)
     }
 }
 
+bool
+Board::val(const Unit &ut) const
+{
+  // See if anything's outside the edges.
+  if ((ut.left_x < 0) ||
+      (ut.right_x >= w) ||
+      (ut.top_y < 0) ||
+      (ut.bot_y >= h)) {
+    return false;
+  }
+
+  // See if any units overlap with a filled hex.
+  for (size_t cnt = 0; cnt < ut.subunits.size(); cnt++) {
+    const pii &sub = ut.subunits[cnt];
+    if (c[sub.second][sub.first]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 
 void
-Board::print() const
+Board::print(ostream& os) const
 {
     for(size_t i = 0; i < h; i++)
     {
       if (i & 1) {
-          cout << " ";
+          os << " ";
       }
       for(size_t j = 0; j < w; j++)
       {
@@ -408,23 +554,23 @@ Board::print() const
 
           if (c[i][j]) {
             if (ispvt) {
-              cout << "@ " ;
+              os << "@ " ;
             } else {
-              cout << "# " ;
+              os << "# " ;
             }
           } else if ((ispvt) && (isut)) {
-            cout << "& " ;
+            os << "& " ;
           } else if (ispvt) {
-            cout << "o " ;
+            os << "o " ;
           } else if (isut) {
-            cout << "+ " ;
+            os << "+ " ;
           } else {
-            cout << ". " ;
+            os << ". " ;
           }
       }
-      cout << endl;
+      os << endl;
     }
-    cout << endl;
+    os << endl;
 }
 
 
@@ -603,7 +749,7 @@ World::actNextUnit() {
   size_t move_x = (board.w + activeUnit.left_x - activeUnit.right_x - 1) / 2;
   while (move_x > 0) {
     activeUnit.e();
-    board.print();
+    // board.print();
     move_x--;
   }
 
