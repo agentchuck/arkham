@@ -8,19 +8,88 @@
 #include "parser.hpp"
 
 Unit::Unit()
-  : dir(0)
+  : dir(0),
+    left_x(-1),
+    right_x(-1),
+    top_y(-1),
+    bot_y(-1)
 {
 }
 
-
 Unit::Unit(const Unit &obj)
-  : dir (obj.dir)
+  : dir (obj.dir),
+    left_x(obj.left_x),
+    right_x(obj.right_x),
+    top_y(obj.top_y),
+    bot_y(obj.bot_y)
 {
   pivot = obj.pivot;
   subunits = obj.subunits;
 }
 
+void
+Unit::setBorders()
+{
+  left_x = subunits[0].first;
+  right_x = subunits[0].first;
+  top_y = subunits[0].second;
+  bot_y = subunits[0].second;
 
+  for(size_t i = 1; i < subunits.size(); i++)
+  {
+     if(subunits[i].first < left_x) {
+       left_x = subunits[i].first;
+     }
+     if(subunits[i].first > right_x) {
+       right_x = subunits[i].first;
+     }
+     if(subunits[i].second < top_y) {
+       top_y = subunits[i].second;
+     }
+     if(subunits[i].second > bot_y) {
+       bot_y = subunits[i].second;
+     }
+  }
+}
+
+void
+Unit::print()
+{
+  // cout << "Unit::print" << endl;
+  cout << left_x << ":" << right_x << " " << top_y << ":" << bot_y << endl;
+  // cout << subunits.size() << " units\n";
+  for(size_t y = top_y; y <= bot_y; y++)
+  {
+    if (y & 1) {
+      cout << " " ;
+    }
+
+    for(size_t x = left_x; x <= right_x; x++)
+    {
+      bool pm = false;
+      if ((pivot.first == x) && (pivot.second == y)) {
+        pm = true; 
+      }
+      bool match = false;
+      for(size_t cnt = 0; cnt < subunits.size(); cnt++) {
+        if ((subunits[cnt].first == x) && (subunits[cnt].second == y)) {
+          match = true; 
+        }
+      }
+      if (match && pm) {
+        cout << "& " ;
+      } else if (match) {
+        cout << "+ " ;
+      } else if (pm) {
+        cout << "o " ;
+      } else {
+        cout << "  " ;
+      }
+    }
+    cout << endl;
+  }
+
+}
 
 
 //
@@ -100,7 +169,7 @@ World::World()
 int
 World::import(const char *filename)
 {
-  int i, sub_cell;
+  int i;
   char *line;
   char *token, *cp;
   char check[80];
@@ -192,7 +261,6 @@ World::import(const char *filename)
        strcpy(pivot_check,"pivot");
        while(1)
        {
-           sub_cell=0;          
            token = strtok(NULL, delimiters);
            if(strncmp(token,check,7)==0) /* get a unit members */
            {
@@ -209,8 +277,8 @@ World::import(const char *filename)
 
                       strtok(NULL, delimiters);
                       newUnit.pivot.second = atoi( strtok(NULL, delimiters));
-                      printf("test case %d===== pivot, x %d, y %d\n",
-                          unit_idx, newUnit.pivot.first, newUnit.pivot.second);
+                      // printf("test case %d===== pivot, x %d, y %d\n",
+                          // unit_idx, newUnit.pivot.first, newUnit.pivot.second);
 
                       go = 0;
                    }
@@ -220,12 +288,15 @@ World::import(const char *filename)
                        subunit.first = atoi( strtok(NULL, delimiters));
                        strtok(NULL, delimiters);
                        subunit.second = atoi( strtok(NULL, delimiters));
-                       printf("test case %d===== sub_cell %d, x %d, y %d\n",
-                           unit_idx, sub_cell,
-                           subunit.first, subunit.second);
+                       // printf("test case %d===== sub_cell %d, x %d, y %d\n",
+                           // unit_idx, sub_cell,
+                           // subunit.first, subunit.second);
                        newUnit.subunits.push_back(subunit);
                    }
                }
+               newUnit.setBorders();
+               newUnit.print();
+               cout << endl;
                units.push_back(newUnit);
                unit_idx++;
            }

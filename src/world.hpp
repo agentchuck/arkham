@@ -25,10 +25,16 @@ class Unit {
     pii pivot;
     int dir;
 
+    int left_x;
+    int right_x;
+    int top_y;
+    int bot_y;
+
     Unit();
     // Need a copy constructor
     Unit(const Unit &obj);
 
+    void setBorders();
     void print();
 };
 
