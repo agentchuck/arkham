@@ -23,10 +23,31 @@ uint32_t numberFromSeed(uint32_t seed);
 uint32_t iterateRNG(uint32_t seed);
 void testRNG(uint32_t seed, size_t count);
 
+class CC {
+ public:
+  int x;
+  int y;
+  int z;
+
+  CC();
+  CC(const CC &obj);
+  CC(pii input);
+
+  void fromOddR(pii input);
+  pii  toOddR();
+
+  CC operator+(const CC& rhs);
+  CC operator-(const CC& rhs);
+};
+
+pii rotateAround(pii pivot, pii point, bool cw);
+
 
 class Unit {
   public:
     vector<pii> subunits;
+    vector<CC> ccunits;
+    CC ccpivot;
     pii pivot;
     int dir;
 
@@ -39,6 +60,7 @@ class Unit {
     // Need a copy constructor
     Unit(const Unit &obj);
 
+    void ccConvert();
     void setBorders();
     void print();
 };

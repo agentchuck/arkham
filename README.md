@@ -12,6 +12,12 @@ Forbidden researches of the old ones
 4. Coordinate over multiple units to maximize line clears over multiple turns.
    (Yeah... ok...)
 
+# Notes
+  redblobgames.com - Hex coordinate information
+  - http://www.redblobgames.com/grids/hexagons/#coordinates
+  - We're using odd-r
+  - When rotating, do we need to convert odd/even-r?...
+
 # Phrases of power
 - Notes...
   Seem to be lovecraftian, probably also related to FP.

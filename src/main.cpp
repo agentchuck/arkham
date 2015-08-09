@@ -47,7 +47,42 @@ int main(int argc, char **argv)
   }
 
   if (rngTest >= 0) {
-    testRNG(rngTest, 100);
+    CC testCC;
+    pii loc;
+    cout << "Test CC\n";
+
+#if 0
+    for (int x = 0; x < 10; x++) {
+      for (int y = 0; y < 10; y++) {
+        loc.first = x;
+        loc.second = y;
+        testCC.fromOddR(loc);
+        cout << "Oddr: " << loc.first << ":" << loc.second << endl;
+        cout << "Cube: " << testCC.x << ":" << testCC.y << ":" << testCC.z << endl << endl;
+        pii loc2 = testCC.toOddR();
+        if (loc != loc2) {
+          cout << "Error! loc2: " << loc2.first << ":" << loc2.second << endl;
+          return -1;
+        }
+      }
+    }
+#endif
+    for (int x = 0; x < 6; x++) {
+      for (int y = 0; y < 6; y++) {
+        loc.first = x;
+        loc.second = y;
+        pii piv = {3,3};
+
+        cout << "In: " << loc.first << ":" << loc.second << endl;
+        pii rotd = rotateAround(piv, loc, true);
+        cout << " CW Out: " << rotd.first << ":" << rotd.second << endl;
+        rotd = rotateAround(piv, loc, false);
+        cout << " CcW Out: " << rotd.first << ":" << rotd.second << endl << endl;
+      }
+    }
+
+
+    //testRNG(rngTest, 100);
     return 0;
   }
 
@@ -75,6 +110,7 @@ int main(int argc, char **argv)
   // For now, just run the first seed unless another is specified.
   if (runSeed == -1) {
     runSeed = wld.seeds[0];
+
   }
   wld.seed = runSeed;
 

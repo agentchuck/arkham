@@ -26,6 +26,90 @@ void testRNG(uint32_t seed, size_t count) {
   }
 }
 
+CC::CC() :
+  x(0),
+  y(0),
+  z(0)
+{
+}
+
+CC::CC(const CC & obj) :
+  x(obj.x),
+  y(obj.y),
+  z(obj.z)
+{
+}
+
+CC::CC(pii input)
+{
+  fromOddR(input);
+}
+
+void
+CC::fromOddR(pii input)
+{
+  // convert odd-r offset to cube
+  x = input.first - (input.second - (input.second & 1)) / 2;
+  z = input.second;
+  y = (-x) - z;
+}
+
+pii
+CC::toOddR()
+{
+  // convert cube to odd-r offset
+  pii output;
+  output.first = x + (z - (z&1)) / 2;
+  output.second = z;
+  return output;
+}
+
+CC
+CC::operator+(const CC& rhs)
+{
+  CC retval(*this);
+  retval.x += rhs.x;
+  retval.y += rhs.y;
+  retval.z += rhs.z;
+
+  return retval;
+}
+
+CC
+CC::operator-(const CC& rhs)
+{
+  CC retval(*this);
+  retval.x -= rhs.x;
+  retval.y -= rhs.y;
+  retval.z -= rhs.z;
+
+  return retval;
+}
+
+
+pii rotateAround(pii pivot, pii point, bool cw)
+{
+  CC ccpiv(pivot);
+  CC ccpt(point);
+
+  CC ccdelta = ccpt - ccpiv;
+  CC ccrot;
+  
+  if (cw) {
+    ccrot.x = -ccdelta.z;
+    ccrot.y = -ccdelta.x;
+    ccrot.z = -ccdelta.y;
+  } else {
+    ccrot.x = -ccdelta.y;
+    ccrot.y = -ccdelta.z;
+    ccrot.z = -ccdelta.x;
+  }
+
+  return (ccrot + ccpiv).toOddR();
+}
+
+
+
 Unit::Unit()
   : dir(0),
     left_x(-1),
@@ -44,6 +128,12 @@ Unit::Unit(const Unit &obj)
 {
   pivot = obj.pivot;
   subunits = obj.subunits;
+}
+
+void
+Unit::ccConvert()
+{
+
 }
 
 void
@@ -102,7 +192,7 @@ Unit::print()
       } else if (pm) {
         cout << "o " ;
       } else {
-        cout << "  " ;
+        cout << ". " ;
       }
     }
     cout << endl;
@@ -299,8 +389,8 @@ World::import(const char *filename)
 
                       strtok(NULL, delimiters);
                       newUnit.pivot.second = atoi( strtok(NULL, delimiters));
-                      // printf("test case %d===== pivot, x %d, y %d\n",
-                          // unit_idx, newUnit.pivot.first, newUnit.pivot.second);
+                      printf("test case %d===== pivot, x %d, y %d\n",
+                          unit_idx, newUnit.pivot.first, newUnit.pivot.second);
 
                       go = 0;
                    }
@@ -310,9 +400,9 @@ World::import(const char *filename)
                        subunit.first = atoi( strtok(NULL, delimiters));
                        strtok(NULL, delimiters);
                        subunit.second = atoi( strtok(NULL, delimiters));
-                       // printf("test case %d===== sub_cell %d, x %d, y %d\n",
-                           // unit_idx, sub_cell,
-                           // subunit.first, subunit.second);
+                       printf("test case %d===== x %d, y %d\n",
+                           unit_idx,
+                           subunit.first, subunit.second);
                        newUnit.subunits.push_back(subunit);
                    }
                }
