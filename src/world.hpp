@@ -62,7 +62,12 @@ class Unit {
 
     void ccConvert();
     void setBorders();
-    void print();
+    // return -1 if this would push me over a border.
+    // Also can check for pivot change later.
+    int  rotate(bool cw);
+    void print() const;
+
+    bool operator==(const Unit& rhs);
 };
 
 class Board {
@@ -78,7 +83,7 @@ class Board {
 
     void resize(size_t width, size_t height);
 
-    void print();
+    void print() const;
 };
 
 class World {

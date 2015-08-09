@@ -161,8 +161,55 @@ Unit::setBorders()
   }
 }
 
+int
+Unit::rotate(bool cw)
+{
+  for(size_t i = 0; i < subunits.size(); i++)
+  {
+    pii newPoint = rotateAround(pivot, subunits[i], cw);
+    subunits[i] = newPoint;
+  }
+  setBorders();
+  bool outside = false;
+  if ((left_x < 0) || (top_y < 0)) {
+    outside = true;
+  }
+#if 0
+
+  // This doesn't work b/c of translocational problems.
+    if (left_x < 0)
+    {
+      for(size_t i = 0; i < subunits.size(); i++)
+      {
+        subunits[i].first -= left_x;
+      }
+      pivot.first -= left_x;
+      right_x -= left_x;
+      left_x = 0;
+    }
+
+    if (top_y < 0)
+    {
+      for(size_t i = 0; i < subunits.size(); i++)
+      {
+        subunits[i].second -= top_y;
+      }
+      pivot.second -= top_y;
+      bot_y -= top_y;
+      top_y = 0;
+    }
+  }
+#endif
+
+  if (outside) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
 void
-Unit::print()
+Unit::print() const
 {
   // cout << "Unit::print" << endl;
   cout << left_x << ":" << right_x << " " << top_y << ":" << bot_y << endl;
@@ -198,6 +245,40 @@ Unit::print()
     cout << endl;
   }
 
+}
+
+bool
+Unit::operator==(const Unit& rhs)
+{
+  cout << "Compare: \n";
+  print();
+  cout << "vs: \n";
+  rhs.print();
+  // This will likely be slow.
+  // Check if the pivot and all points match.
+  if (pivot != rhs.pivot) {
+    return false;
+  }
+  // Check for an equivalent # of subunits.
+  if (subunits.size() != rhs.subunits.size()) {
+    return false;
+  }
+
+  // For each subunit, check if there is a corresponding unit in rhs.
+  for (size_t cnt = 0; cnt < subunits.size(); cnt++) {
+    bool fnd = false;
+    for (size_t cnt2 = 0; cnt2 < rhs.subunits.size(); cnt2++) {
+      if (subunits[cnt] == rhs.subunits[cnt2]) {
+        fnd = true;
+        break;
+      }
+    }
+    if (!fnd) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 
@@ -246,7 +327,7 @@ Board::resize(size_t width, size_t height)
 
 
 void
-Board::print()
+Board::print() const
 {
     for(size_t i = 0; i < h; i++)
     {

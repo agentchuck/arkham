@@ -47,11 +47,12 @@ int main(int argc, char **argv)
   }
 
   if (rngTest >= 0) {
+
+#if 0
     CC testCC;
     pii loc;
     cout << "Test CC\n";
 
-#if 0
     for (int x = 0; x < 10; x++) {
       for (int y = 0; y < 10; y++) {
         loc.first = x;
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
       }
     }
 #endif
+#if 0
     for (int x = 0; x < 6; x++) {
       for (int y = 0; y < 6; y++) {
         loc.first = x;
@@ -80,6 +82,7 @@ int main(int argc, char **argv)
         cout << " CcW Out: " << rotd.first << ":" << rotd.second << endl << endl;
       }
     }
+#endif
 
 
     //testRNG(rngTest, 100);
@@ -125,6 +128,27 @@ int main(int argc, char **argv)
 
     wld.seed = iterateRNG(wld.seed);
   }
+
+#if 0
+  for (int cnt = 0; cnt < wld.units.size(); cnt++) {
+    cout << 0 << " vs " << cnt << endl;
+    if (wld.units[0] == wld.units[cnt]) {
+      cout << " Match\n";
+    } else {
+      cout << " Not match\n";
+    }
+  }
+  cout << endl;
+  Unit rotunit(wld.units[9]);
+  for (int cnt = 0; cnt < 8; cnt++) {
+    if (wld.units[9] == rotunit) {
+      cout << "Match\n\n";
+    } else {
+      cout << "Not match\n\n";
+    }
+    rotunit.rotate(true);
+  }
+#endif
 
   return 0;
 }
