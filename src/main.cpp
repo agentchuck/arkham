@@ -191,7 +191,9 @@ int main(int argc, char **argv)
       }
     } while (inch > 0);
 
-    jsonOutput(wld.id, wld.initialSeed, runCommands, std::cerr);
+    jsonHeader(std::cerr);
+    jsonOutput(true, wld.id, wld.initialSeed, runCommands, std::cerr);
+    jsonFooter(std::cerr);
     //cerr << "Ran command string: " << runCommands << endl;
   } else {
     wld.runAll();

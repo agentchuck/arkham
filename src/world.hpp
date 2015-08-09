@@ -10,7 +10,9 @@ using namespace std;
 
 typedef std::pair<int32_t, int32_t> pii;
 
-void jsonOutput(int id, int seed, string commands, ostream& out);
+void jsonHeader(ostream& out);
+void jsonOutput(bool first, int id, int seed, string commands, ostream& out);
+void jsonFooter(ostream& out);
 
 enum act_cmd
 {

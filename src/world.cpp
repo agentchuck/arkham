@@ -8,15 +8,25 @@
 
 #include "parser.hpp"
 
-void jsonOutput(int id, int seed, string commands, ostream& out)
+void jsonHeader(ostream& out)
 {
-  out << "[ { \"problemId\": " << id << endl;
+  out << "[" << endl;
+}
+
+void jsonOutput(bool first, int id, int seed, string commands, ostream& out)
+{
+  out << (first ? " " : ",") << " { \"problemId\": " << id << endl;
   out << "  , \"seed\": " << seed << endl;
   out << "  , \"tag\": \"" << id << ":" << seed << "-1\"" << endl;
   out << "  , \"solution\": \"" << commands << "\"" << endl;
   out << "  }" << endl;
+}
+
+void jsonFooter(ostream& out)
+{
   out << "]" << endl;
 }
+
 
 act_cmd charToCmd(char inch) {
   act_cmd cmd=idle;
@@ -500,6 +510,7 @@ Board::doAct(act_cmd cmd) {
     *au = testUnit;
   } else {
     lock();
+    clearrows();
   }
 
 }
@@ -519,6 +530,11 @@ Board::clearrows()
       }
     }
     if (rowFull) {
+      for(int back = y - 1; back >= 0; back--) {
+        c[back+1] = c[back];
+      }
+      vector<bool> rowvector(w);
+      c[0].assign(w, false);
     }
   }
 }
@@ -792,10 +808,13 @@ World::actNextUnit() {
 void
 World::runAll()
 {
+  jsonHeader(std::cout);
+  bool first = true;
   for (int rnum = 0; rnum < seeds.size(); rnum++) {
     // Reset the state
     initialSeed = seeds[rnum];
     board = initialBoard;
+    currentSource = 0;
 
     string commands;
 
@@ -832,13 +851,15 @@ World::runAll()
         if (board.au == nullptr) {
           break;
         } else {
-          usleep(100000);
+          //usleep(100000);
         }
       } while (!innerdone);
     } while (!done);
 
 
     // Dump the output
-    jsonOutput(id, seeds[rnum], commands, std::cout);
+    jsonOutput(first, id, seeds[rnum], commands, std::cout);
+    first = false;
   }
+  jsonFooter(std::cout);
 }

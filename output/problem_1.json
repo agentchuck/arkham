@@ -25,6 +25,20 @@
   }
 ]
 
+[
+  { "problemId": 1
+  , "seed": 0
+  , "tag": "1:0-1 Clear test"
+  , "solution": "llll000llll00llll0llleleaaa0000a00aaa0000a0llleeeleeellleeeleellleeeleaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+]
+[
+  { "problemId": 1
+  , "seed": 0
+  , "tag": "1:0-1 Next clear test"
+  , "solution": "llll00ala00llll00ala0llll00all0lllllla0lllllll0eeelllllll00eeellllllleeeeellllllle0000alal0000llll0000aaaalaa00000aaaalal0aaaaaaaaaaaaaaa"
+  }
+]
 
 
 [ { "problemId": 3
