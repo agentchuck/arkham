@@ -14,8 +14,22 @@
 
 [ { "problemId": 1
   , "seed":      0
-  , "tag":       "4 points"
-  , "solution":  "aaaagggaag"
+  , "solution":  "eeia! ia!iiggggaaagga"
   }
 ]
 
+[ { "problemId": 1
+  , "seed":      0
+  , "tag":       "2 phrases"
+  , "solution":  "eeia! ia!iiei!aei!agggaag"
+  }
+]
+
+
+
+[ { "problemId": 3
+  , "seed":      0
+  , "tag":       "Third try"
+  , "solution":  "adavarakd"
+  }
+]

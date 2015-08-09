@@ -18,6 +18,11 @@ enum Dir {
   DirMAX
 };
 
+// Could be a class...
+uint32_t numberFromSeed(uint32_t seed);
+uint32_t iterateRNG(uint32_t seed);
+void testRNG(uint32_t seed, size_t count);
+
 
 class Unit {
   public:
@@ -62,9 +67,12 @@ class World {
     int id;
     int sourcelength;
 
+    int seed;
+
     World();
 
     int import(const char *filename);
+    size_t nextUnit();
 };
 
 #endif

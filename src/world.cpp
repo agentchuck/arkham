@@ -7,6 +7,25 @@
 
 #include "parser.hpp"
 
+uint32_t numberFromSeed(uint32_t seed) {
+  // The random number associated with a seed consists of bits 30..16 of that seed
+  return (seed >> 16) & 0x7fff;
+}
+
+uint32_t iterateRNG(uint32_t seed) {
+  uint64_t temp = uint64_t(seed) * uint64_t(1103515245);
+  temp += 12345;
+  return temp & 0xffffffff;
+}
+
+void testRNG(uint32_t seed, size_t count) {
+  cerr << "First " << count << " elements of seed: " << seed << endl;
+  for(size_t i = 0; i < count; i++) {
+    cout << numberFromSeed(seed) << endl;
+    seed = iterateRNG(seed);
+  }
+}
+
 Unit::Unit()
   : dir(0),
     left_x(-1),
@@ -162,7 +181,10 @@ Board::print()
 
 
 World::World()
-  : board(0,0)
+  : board(0,0),
+    id(0),
+    sourcelength(0),
+    seed(0)
 {
 }
 
@@ -313,3 +335,7 @@ World::import(const char *filename)
 
 }
 
+size_t
+World::nextUnit() {
+  return (numberFromSeed(seed) % units.size());
+}

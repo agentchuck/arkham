@@ -22,7 +22,10 @@ Forbidden researches of the old ones
   Need non-trivial sample problems to test rotations.
 
 - Known:
-ei!  E, SW, W -> Translates to SW.
+ei!
+ - E, SW, W -> Translates to SW.
+ia! ia!
+ - SW, SW, W, SE, SW, SW, W
 
 - Possible:
 davar - From postmortem
@@ -34,9 +37,6 @@ Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn - Famous HPL reference
 
 yuggoth - From map 7
  - E, CCW, SW, SW, SE, CCW, SW
-
-1a! 1a! - From map 3
- - CW, SW, W, SE, CW, SW, W
 
 R'lyeh - From map 5
  - CW, W, SE, E, E, SW

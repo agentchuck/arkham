@@ -13,28 +13,10 @@ int timelimit;
 int memorylimit;
 int cores;
 int rngTest;
+int runSeed = -1;
 vector< string > phrases;
 string inputfile;
 
-
-uint32_t numberFromSeed(uint32_t seed) {
-  // The random number associated with a seed consists of bits 30..16 of that seed
-  return (seed >> 16) & 0x7fff;
-}
-
-uint32_t iterateRNG(uint32_t seed) {
-  uint64_t temp = uint64_t(seed) * uint64_t(1103515245);
-  temp += 12345;
-  return temp & 0xffffffff;
-}
-
-void testRNG(uint32_t seed, size_t count) {
-  cerr << "First " << count << " elements of seed: " << seed << endl;
-  for(size_t i = 0; i < count; i++) {
-    cout << numberFromSeed(seed) << endl;
-    seed = iterateRNG(seed);
-  }
-}
 
 int main(int argc, char **argv)
 {
@@ -52,6 +34,7 @@ int main(int argc, char **argv)
       ("cores,c", po::value< int >(&memorylimit)->default_value(1),
           "Available cores for computation")
       ("phrase,p", po::value< vector<string> >(&phrases), "Phrase of power, as quoted string")
+      ("seed,s", po::value< int >(&runSeed), "Run a specific seed")
   ;
 
   po::variables_map vm;
@@ -86,22 +69,26 @@ int main(int argc, char **argv)
     }
   }
 
-  /*
-  readFile(inputfile.c_str());
-
-  Board myBoard(10,10);
-  myBoard.c[5][5] = true;
-  myBoard.print();
-
-  Board myOtherBoard(myBoard);
-  myOtherBoard.c[6][6] = true;
-  myOtherBoard.print();
-
-  myBoard.print();
-  */
-
   World wld;
   wld.import(inputfile.c_str());
+
+  // For now, just run the first seed unless another is specified.
+  if (runSeed == -1) {
+    runSeed = wld.seeds[0];
+  }
+  wld.seed = runSeed;
+
+  cout << "Running seed: " << runSeed << endl;
+  cout << "Source length: " << wld.sourcelength << endl;
+  cout << "Total units: " << wld.units.size() << endl;
+
+  for (int cnt = 0; cnt < wld.sourcelength; cnt++) {
+    size_t nextUnit = wld.nextUnit();
+    cout << "Next piece: " << nextUnit << endl;
+    wld.units[nextUnit].print();
+
+    wld.seed = iterateRNG(wld.seed);
+  }
 
   return 0;
 }
