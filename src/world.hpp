@@ -62,10 +62,17 @@ class Unit {
 
     void ccConvert();
     void setBorders();
-    // return -1 if this would push me over a border.
-    // Also can check for pivot change later.
-    int  rotate(bool cw);
+    // return false if this would push me over a border.
+    // Also need world to check right/bot 
+    bool rotate(bool cw);
+    bool e();
+    bool w();
+    bool se();
+    bool sw();
+
     void print() const;
+    // Is there a subunit at this coord?
+    bool suAt(pii pt) const;
 
     bool operator==(const Unit& rhs);
 };
@@ -76,6 +83,7 @@ class Board {
     vector< vector < bool > > c;
     size_t w;
     size_t h;
+    Unit* au;
 
     Board(size_t width, size_t height);
     // Need a copy constructor
@@ -90,6 +98,7 @@ class World {
   public:
     Board board;
     vector< Unit > units;
+    Unit activeUnit;
     vector< uint32_t > seeds;
     int id;
     int sourcelength;
@@ -100,6 +109,7 @@ class World {
 
     int import(const char *filename);
     size_t nextUnit();
+    void actNextUnit();
 };
 
 #endif

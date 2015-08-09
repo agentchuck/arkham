@@ -150,5 +150,15 @@ int main(int argc, char **argv)
   }
 #endif
 
+  cout << "Board with no units\n";
+  wld.board.print();
+  for (int cnt = 0; cnt < wld.units.size(); cnt++) {
+    cout << "Board with unit " << cnt << endl;;
+    wld.board.au = &wld.units[cnt];
+    wld.board.print();
+  }
+
+  wld.actNextUnit();
+
   return 0;
 }

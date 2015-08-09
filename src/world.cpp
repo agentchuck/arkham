@@ -161,7 +161,7 @@ Unit::setBorders()
   }
 }
 
-int
+bool
 Unit::rotate(bool cw)
 {
   for(size_t i = 0; i < subunits.size(); i++)
@@ -174,38 +174,89 @@ Unit::rotate(bool cw)
   if ((left_x < 0) || (top_y < 0)) {
     outside = true;
   }
-#if 0
 
-  // This doesn't work b/c of translocational problems.
-    if (left_x < 0)
-    {
-      for(size_t i = 0; i < subunits.size(); i++)
-      {
-        subunits[i].first -= left_x;
-      }
-      pivot.first -= left_x;
-      right_x -= left_x;
-      left_x = 0;
-    }
+  return !outside;
+}
 
-    if (top_y < 0)
-    {
-      for(size_t i = 0; i < subunits.size(); i++)
-      {
-        subunits[i].second -= top_y;
-      }
-      pivot.second -= top_y;
-      bot_y -= top_y;
-      top_y = 0;
-    }
+bool
+Unit::e()
+{
+  for(size_t i = 0; i < subunits.size(); i++)
+  {
+    subunits[i].first++;
   }
-#endif
-
-  if (outside) {
-    return -1;
-  } else {
-    return 0;
+  pivot.first++;
+  setBorders();
+  bool outside = false;
+  if ((left_x < 0) || (top_y < 0)) {
+    outside = true;
   }
+
+  return !outside;
+}
+
+bool
+Unit::w()
+{
+  for(size_t i = 0; i < subunits.size(); i++)
+  {
+    subunits[i].first--;
+  }
+  pivot.first--;
+  setBorders();
+  bool outside = false;
+  if ((left_x < 0) || (top_y < 0)) {
+    outside = true;
+  }
+
+  return !outside;
+}
+
+bool
+Unit::se()
+{
+  for(size_t i = 0; i < subunits.size(); i++)
+  {
+    if (subunits[i].second & 1) {
+      subunits[i].first++;
+    }
+    subunits[i].second++;
+  }
+  if (pivot.second & 1) {
+    pivot.first++;
+  }
+  pivot.second++;
+  setBorders();
+  bool outside = false;
+  if ((left_x < 0) || (top_y < 0)) {
+    outside = true;
+  }
+
+  return !outside;
+}
+
+bool
+Unit::sw()
+{
+  for(size_t i = 0; i < subunits.size(); i++)
+  {
+    if (!(subunits[i].second & 1)) {
+      subunits[i].first--;
+    }
+    subunits[i].second++;
+  }
+  if (!(pivot.second & 1)) {
+    pivot.first--;
+  }
+  pivot.second++;
+
+  setBorders();
+  bool outside = false;
+  if ((left_x < 0) || (top_y < 0)) {
+    outside = true;
+  }
+
+  return !outside;
 }
 
 void
@@ -244,7 +295,18 @@ Unit::print() const
     }
     cout << endl;
   }
+}
 
+bool
+Unit::suAt(pii pt) const
+{
+  for(size_t cnt = 0; cnt < subunits.size(); cnt++) {
+    if (subunits[cnt] == pt) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 bool
@@ -290,7 +352,8 @@ Unit::operator==(const Unit& rhs)
 
 Board::Board(size_t width, size_t height)
   : w(width),
-    h(height)
+    h(height),
+    au(nullptr)
 {
     vector<bool> rowvector(w);
     for(size_t i = 0; i < h; i++)
@@ -336,7 +399,28 @@ Board::print() const
       }
       for(size_t j = 0; j < w; j++)
       {
-          cout << (c[i][j] ? "* " : ". ") ;
+          bool ispvt(false);
+          bool isut(false);
+          if (au != nullptr) {
+            ispvt = ((au->pivot.first == j) && (au->pivot.second == i));
+            isut = au->suAt(pii(j,i));
+          }
+
+          if (c[i][j]) {
+            if (ispvt) {
+              cout << "@ " ;
+            } else {
+              cout << "# " ;
+            }
+          } else if ((ispvt) && (isut)) {
+            cout << "& " ;
+          } else if (ispvt) {
+            cout << "o " ;
+          } else if (isut) {
+            cout << "+ " ;
+          } else {
+            cout << ". " ;
+          }
       }
       cout << endl;
     }
@@ -510,3 +594,18 @@ size_t
 World::nextUnit() {
   return (numberFromSeed(seed) % units.size());
 }
+
+void
+World::actNextUnit() {
+  // Get a copy from the source
+  activeUnit = ( units[ nextUnit() ] );
+  board.au = &activeUnit;
+  size_t move_x = (board.w + activeUnit.left_x - activeUnit.right_x - 1) / 2;
+  while (move_x > 0) {
+    activeUnit.e();
+    board.print();
+    move_x--;
+  }
+
+}
+
