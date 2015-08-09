@@ -32,22 +32,26 @@ ei!
  - E, SW, W -> Translates to SW.
 ia! ia!
  - SW, SW, W, SE, SW, SW, W
-
-- Possible:
-davar - From postmortem
- - CW, SW, CW, SW, CW
- - W, CW, SW, CW, SW, CW, W (with quotes)
-cthulhu - Hint in spec
- - E, CCW, SW, CCW, SE, SW, CCW
-Ph'nglui mglw'nafh Cthulhu R'lyeh wgah'nagl fhtagn - Famous HPL reference
-
 yuggoth - From map 7
  - E, CCW, SW, SW, SE, CCW, SW
 
+- Possible:
+ph'nglui mglw'nafh cthulhu r'lyeh wgah'nagl fhtagn - Famous HPL reference
+
+bigboote - From twitter
+
+Eris - Tenth planet
+
+- Wrong:
+davar - From postmortem 
+ - CW, SW, CW, SW, CW
+ - W, CW, SW, CW, SW, CW, W (with quotes)
+
+cthulhu - Hint in spec
+ - E, CCW, SW, CCW, SE, SW, CCW
+
 R'lyeh - From map 5
  - CW, W, SE, E, E, SW
-
-
 
 # Output format:
 [ { "problemId": number   /* The `id` of the game configuration */

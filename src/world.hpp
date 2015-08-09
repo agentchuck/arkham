@@ -124,6 +124,7 @@ class World {
     vector< uint32_t > seeds;
     int id;
     int sourcelength;
+    int currentSource;
 
     int seed;
 
@@ -131,7 +132,8 @@ class World {
 
     int import(const char *filename);
     size_t nextUnit();
-    void actNextUnit();
+    // Returns false if over the source limit size.
+    bool actNextUnit();
 };
 
 #endif

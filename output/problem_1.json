@@ -30,6 +30,50 @@
 [ { "problemId": 3
   , "seed":      0
   , "tag":       "Third try"
-  , "solution":  "adavarakd"
+  , "solution":  "adavarakde"
   }
 ]
+
+[ { "problemId": 3
+  , "seed":      0
+  , "tag":       "Instant Death - 0"
+  , "solution":  "d"
+  }
+]
+
+export OUTPUT='[ { "problemId": 3
+  , "seed":      29060
+  , "tag":       "Try again - 29060"
+  , "solution":  "adavaroo0aaa2a"
+  }
+]'
+
+export OUTPUT='[ { "problemId": 3
+  , "seed":      6876
+  , "tag":       "Next try - 6876"
+  , "solution":  "ar'lyehr'lyehlgugggg"
+  }
+]'
+
+export OUTPUT='[ { "problemId": 3
+  , "seed":      31960
+  , "tag":       "Next try - 31960"
+  , "solution":  "acthulhua0aaa"
+  }
+]'
+
+export OUTPUT='[ { "problemId": 3
+  , "seed":      6094
+  , "tag":       "Next try - 6094"
+  , "solution":  "bigbootedll"
+  }
+]'
+
+export OUTPUT='[ { "problemId": 3
+  , "seed":      6094
+  , "tag":       "Another - 6094"
+  , "solution":  "aerisaaa0aa0"
+  }
+]'
+
+curl --user :$API_TOKEN -X POST -H "Content-Type: application/json"         -d "$OUTPUT"         https://davar.icfpcontest.org/teams/$TEAM_ID/solutions

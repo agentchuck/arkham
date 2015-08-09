@@ -50,6 +50,13 @@ int main(int argc, char **argv)
   if (rngTest >= 0) {
 
 #if 0
+  for (int cnt = 0; cnt < wld.sourcelength; cnt++) {
+    size_t nextUnit = wld.nextUnit();
+    cout << "Next piece: " << nextUnit << endl;
+    wld.units[nextUnit].print();
+
+    wld.seed = iterateRNG(wld.seed);
+  }
     CC testCC;
     pii loc;
     cout << "Test CC\n";
@@ -122,15 +129,8 @@ int main(int argc, char **argv)
   cout << "Source length: " << wld.sourcelength << endl;
   cout << "Total units: " << wld.units.size() << endl;
 
-  for (int cnt = 0; cnt < wld.sourcelength; cnt++) {
-    size_t nextUnit = wld.nextUnit();
-    cout << "Next piece: " << nextUnit << endl;
-    wld.units[nextUnit].print();
-
-    wld.seed = iterateRNG(wld.seed);
-  }
-
 #if 0
+
   for (int cnt = 0; cnt < wld.units.size(); cnt++) {
     cout << 0 << " vs " << cnt << endl;
     if (wld.units[0] == wld.units[cnt]) {
@@ -161,9 +161,17 @@ int main(int argc, char **argv)
 
 
   int inch = -1;
+  string runCommands;
   do {
     if (wld.board.au == nullptr) {
-      wld.actNextUnit();
+      if (!wld.actNextUnit()) {
+        // Source is empty.
+        break;
+      }
+      if (!wld.board.val(wld.activeUnit)) {
+        // Board is full.
+        break;
+      }
     }
     fstream outputfile("board.txt", ios_base::out);
     wld.board.print(outputfile);
@@ -171,11 +179,14 @@ int main(int argc, char **argv)
     inch = getchar();
     if (inch > 0) {
       act_cmd cmd = charToCmd(inch);
+      if (cmd != idle) {
+        runCommands.push_back(inch);
+      }
       wld.board.doAct(cmd);
     }
   } while (inch > 0);
 
-  wld.actNextUnit();
+  cerr << "Ran command string: " << runCommands << endl;
 
   return 0;
 }

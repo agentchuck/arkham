@@ -497,6 +497,19 @@ Board::doAct(act_cmd cmd) {
 void
 Board::clearrows()
 {
+  for(size_t y = 0; y < h; y++)
+  {
+    bool rowFull = true;
+    for(size_t x = 0; x < w; x++)
+    {
+      if (!c[y][x]) {
+        rowFull = false;
+        break;
+      }
+    }
+    if (rowFull) {
+    }
+  }
 }
 
 void
@@ -585,6 +598,7 @@ World::World()
   : board(0,0),
     id(0),
     sourcelength(0),
+    currentSource(0),
     seed(0)
 {
 }
@@ -741,8 +755,11 @@ World::nextUnit() {
   return (numberFromSeed(seed) % units.size());
 }
 
-void
+bool
 World::actNextUnit() {
+  if (currentSource >= sourcelength) {
+    return false;
+  }
   // Get a copy from the source
   activeUnit = ( units[ nextUnit() ] );
   board.au = &activeUnit;
@@ -753,5 +770,9 @@ World::actNextUnit() {
     move_x--;
   }
 
+  currentSource++;
+  seed = iterateRNG(seed);
+
+  return true;
 }
 
