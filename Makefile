@@ -15,7 +15,7 @@ OBJFILES := $(CXXFILES:src/%.cpp=%) $(CFILES:src/%.c=%)
 DEPFILES := $(CXXFILES:src/%.cpp=%) $(CFILES:src/%.c=%)
 OFILES := $(OBJFILES:%=obj/%.o)
 
-BINFILE = arkham
+BINFILE = play_icfp2015
 
 COMMONFLAGS = -Wall -Wextra -pedantic -Wno-sign-compare
 LDFLAGS = -lboost_program_options

@@ -17,7 +17,7 @@ void jsonOutput(bool first, int id, int seed, string commands, ostream& out)
 {
   out << (first ? " " : ",") << " { \"problemId\": " << id << endl;
   out << "  , \"seed\": " << seed << endl;
-  out << "  , \"tag\": \"" << id << ":" << seed << "-1\"" << endl;
+  out << "  , \"tag\": \"" << id << ":" << seed << "-2\"" << endl;
   out << "  , \"solution\": \"" << commands << "\"" << endl;
   out << "  }" << endl;
 }
@@ -394,10 +394,10 @@ Unit::suAt(pii pt) const
 bool
 Unit::operator==(const Unit& rhs)
 {
-  cout << "Compare: \n";
-  print();
-  cout << "vs: \n";
-  rhs.print();
+  //cout << "Compare: \n";
+  //print();
+  //cout << "vs: \n";
+  //rhs.print();
   // This will likely be slow.
   // Check if the pivot and all points match.
   if (pivot != rhs.pivot) {
@@ -627,6 +627,7 @@ World::World()
     id(0),
     sourcelength(0),
     currentSource(0),
+    stepDelay(0),
     initialSeed(0),
     seed(0)
 {
@@ -657,9 +658,9 @@ World::import(const char *filename)
        line = readline(fp); 
        cp=strdup(line);
        token = strtok(cp, delimiters); /* height */
-       printf("first token = %s\n", token);
+       //printf("first token = %s\n", token);
        height = atoi( strtok(NULL, delimiters));
-       printf("height=%d\n",height);
+       //printf("height=%d\n",height);
        strtok(NULL, delimiters);  /*width */
        width =  atoi( strtok(NULL, delimiters));
 
@@ -672,12 +673,12 @@ World::import(const char *filename)
        while (true)
        {
          token = strtok(NULL, delimiters);
-         printf("++++ %s\n",token);
+         //printf("++++ %s\n",token);
          if(strncmp(token,check,5)==0)
               break;
          seeds.push_back(atoi(token));
        }
-       printf("++++++++++seedNum=%lu\n", seeds.size());
+       //printf("++++++++++seedNum=%lu\n", seeds.size());
        strtok(NULL, delimiters);/* units */
        /* skip units*/
        strcpy(check,"id");
@@ -730,7 +731,7 @@ World::import(const char *filename)
            token = strtok(NULL, delimiters);
            if(strncmp(token,check,7)==0) /* get a unit members */
            {
-               printf("=========== new test cases %d\n", unit_idx);
+               //printf("=========== new test cases %d\n", unit_idx);
                Unit newUnit;
                go = 1;
                while(go)
@@ -743,8 +744,8 @@ World::import(const char *filename)
 
                       strtok(NULL, delimiters);
                       newUnit.pivot.second = atoi( strtok(NULL, delimiters));
-                      printf("test case %d===== pivot, x %d, y %d\n",
-                          unit_idx, newUnit.pivot.first, newUnit.pivot.second);
+                      //printf("test case %d===== pivot, x %d, y %d\n",
+                          //unit_idx, newUnit.pivot.first, newUnit.pivot.second);
 
                       go = 0;
                    }
@@ -754,15 +755,15 @@ World::import(const char *filename)
                        subunit.first = atoi( strtok(NULL, delimiters));
                        strtok(NULL, delimiters);
                        subunit.second = atoi( strtok(NULL, delimiters));
-                       printf("test case %d===== x %d, y %d\n",
-                           unit_idx,
-                           subunit.first, subunit.second);
+                       //printf("test case %d===== x %d, y %d\n",
+                           //unit_idx,
+                           //subunit.first, subunit.second);
                        newUnit.subunits.push_back(subunit);
                    }
                }
                newUnit.setBorders();
-               newUnit.print();
-               cout << endl;
+               //newUnit.print();
+               //cout << endl;
                units.push_back(newUnit);
                unit_idx++;
            }
@@ -771,7 +772,7 @@ World::import(const char *filename)
                break;
            }
        }
-       board.print();
+       //board.print();
        fclose(fp);
   }
 
@@ -817,49 +818,129 @@ World::runAll()
     currentSource = 0;
 
     string commands;
-
-    // Run as many units as possible
-    bool done(false);
-    do {
-      if (!actNextUnit()) {
-        // Source is empty.
-        break;
-      }
-      if (!board.val(activeUnit)) {
-        // Board is full.
-        break;
-      }
-
-      bool innerdone = false;
-      do {
-      fstream outputfile("board.txt", ios_base::out);
-      board.print(outputfile);
-      outputfile.close();
-
-        // Mark I - Get something done.
-        // Try to go SE. If can't, then go W.
-        Unit test(activeUnit);
-        test.se();
-        if (board.val(test)) {
-          board.doAct(s_east);
-          commands += 'm';
-        } else {
-          board.doAct(west);
-          commands += '0';
-        }
-
-        if (board.au == nullptr) {
-          break;
-        } else {
-          //usleep(100000);
-        }
-      } while (!innerdone);
-    } while (!done);
-
+    commands += mark2();
 
     // Dump the output
     jsonOutput(first, id, seeds[rnum], commands, std::cout);
     first = false;
   }
   jsonFooter(std::cout);
+}
+
+// Dumb! Got us to about 140th place
+string
+World::mark1()
+{
+  string commands;
+
+  // Run as many units as possible
+  bool done(false);
+  do {
+    if (!actNextUnit()) {
+      // Source is empty.
+      break;
+    }
+    if (!board.val(activeUnit)) {
+      // Board is full.
+      break;
+    }
+
+    bool innerdone = false;
+    do {
+      fstream outputfile("board.txt", ios_base::out);
+      board.print(outputfile);
+      outputfile.close();
+
+      Unit test(activeUnit);
+      test.se();
+      if (board.val(test)) {
+        board.doAct(s_east);
+        commands += 'm';
+      } else {
+        board.doAct(west);
+        commands += '0';
+      }
+
+      if (board.au == nullptr) {
+        break;
+      } else {
+        usleep(stepDelay);
+      }
+    } while (!innerdone);
+  } while (!done);
+
+  return commands;
+}
+
+string
+World::mark2()
+{
+  string commands;
+
+  // Run as many units as possible
+  bool done(false);
+  do {
+    if (!actNextUnit()) {
+      // Source is empty.
+      break;
+    }
+    if (!board.val(activeUnit)) {
+      // Board is full.
+      break;
+    }
+
+    act_cmd lastCmd = idle;
+    bool unitdone = false;
+    do {
+      if (stepDelay > 0) {
+        fstream outputfile("board.txt", ios_base::out);
+        board.print(outputfile);
+        outputfile.close();
+        usleep(stepDelay);
+      }
+
+      Unit test(activeUnit);
+      test.se();
+      if (board.val(test)) {
+        board.doAct(s_east);
+        lastCmd = s_east;
+        commands += 'm';
+      } else {
+        test = activeUnit;
+        test.sw();
+        if (board.val(test)) {
+          board.doAct(s_west);
+          lastCmd = s_west;
+          commands += 'a';
+        } else {
+          test = activeUnit;
+          test.e();
+          if ((lastCmd != west) && (board.val(test))) {
+            board.doAct(east);
+            lastCmd = east;
+            commands += 'e';
+          } else {
+            test = activeUnit;
+            test.w();
+            if ((lastCmd != east) && (board.val(test))) {
+              board.doAct(west);
+              lastCmd = west;
+              commands += '0';
+            } else {
+              // Go SW to lock
+              board.doAct(s_west);
+              lastCmd = s_west;
+              commands += 'a';
+            }
+          }
+        }
+      }
+
+      if (board.au == nullptr) {
+        break;
+      }
+    } while (!unitdone);
+  } while (!done);
+
+  return commands;
 }

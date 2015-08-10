@@ -90,4 +90,14 @@ export OUTPUT='[ { "problemId": 3
   }
 ]'
 
+
+[
+  { "problemId": 0
+  , "seed": 0
+  , "tag": "0:0-1"
+  , "solution": "mmmmmmmmm000000000mmmmmmmmm00000000mmmmmmm000000mmmmmmm00000mmmmmmm000mmmmmmmmm000mmmmmmmm0mmmmmm0m0mmmm000m0mmmmmm0mmmm00mm0m00m0mmm00m0m0mm00mm0000m0m0m0m0mm00m0m0m0m0m0"
+  }
+]
+
+
 curl --user :$API_TOKEN -X POST -H "Content-Type: application/json"         -d "$OUTPUT"         https://davar.icfpcontest.org/teams/$TEAM_ID/solutions

@@ -1,8 +1,19 @@
-# arkham
+# arkham - play_icfp2015
 Forbidden researches of the old ones
 
+# Building the package
+Standard makefile, no arguments. Executable will be play_icfp2015.
+
+# Running the package
+Takes the defined arguments, but largely ignores them. :^)
+Also has several debugging options for generating output, etc.
+
+
 # Workitems
-- Find phrases of power
+- Incorporate phrases of power.
+- WBN to have smarter algorithms, but mostly out of time.
+ - Ideally could farm out different strategies to subprocesses on
+   multiple cores and pick the optimal. Give up after -t seconds, etc.
 
 # Desired Algorithm
 1. Determine the possible endpoints given starting location of piece
@@ -38,7 +49,7 @@ yuggoth - From map 7
 - Possible:
 ph'nglui mglw'nafh cthulhu r'lyeh wgah'nagl fhtagn - Famous HPL reference
 
-- Wrong:
+- Not a word of power:
 davar - From postmortem 
  - CW, SW, CW, SW, CW
  - W, CW, SW, CW, SW, CW, W (with quotes)

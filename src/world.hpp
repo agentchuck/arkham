@@ -130,6 +130,7 @@ class World {
     int id;
     int sourcelength;
     int currentSource;
+    int stepDelay;
 
     int initialSeed;
     int seed;
@@ -142,6 +143,8 @@ class World {
     bool actNextUnit();
 
     void runAll();
+    string mark1();
+    string mark2();
 };
 
 #endif

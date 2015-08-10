@@ -16,6 +16,7 @@ int cores;
 int rngTest;
 int runSeed = -1;
 int interactive = -1;
+int stepDelay = 0;
 vector< string > phrases;
 string inputfile;
 
@@ -38,6 +39,7 @@ int main(int argc, char **argv)
       ("phrase,p", po::value< vector<string> >(&phrases), "Phrase of power, as quoted string")
       ("seed,s", po::value< int >(&runSeed), "Run a specific seed")
       ("interactive,i", po::value< int >(&interactive), "Run interactive")
+      ("delay,d", po::value< int >(&stepDelay), "Step delay")
   ;
 
   po::variables_map vm;
@@ -100,25 +102,26 @@ int main(int argc, char **argv)
   }
 
   if (vm.count("filename") == 1) {
-      cout << "Input file: " << vm["filename"].as<string>() << ".\n";
+      // cout << "Input file: " << vm["filename"].as<string>() << ".\n";
   } else {
       cout << "Input file required. Use -f <filename>\n";
       cout << desc << "\n";
       return -1;
   }
 
-  cout << "Time limit: " << timelimit << " seconds.\n";
-  cout << "Memory limit: " << memorylimit << " MB.\n";
+  //cout << "Time limit: " << timelimit << " seconds.\n";
+  //cout << "Memory limit: " << memorylimit << " MB.\n";
 
   if (phrases.size()) {
-    cout << "Phrases of power: " << phrases.size() << endl;
+    //cout << "Phrases of power: " << phrases.size() << endl;
     for (size_t word = 0; word < phrases.size(); word++) {
-      cout << phrases[word] << endl;
+      // cout << phrases[word] << endl;
     }
   }
 
   World wld;
   wld.import(inputfile.c_str());
+  wld.stepDelay = stepDelay;
 
   // For now, just run the first seed unless another is specified.
   if (runSeed == -1) {
@@ -128,9 +131,9 @@ int main(int argc, char **argv)
   wld.initialSeed = runSeed;
   wld.seed = runSeed;
 
-  cout << "Running seed: " << runSeed << endl;
-  cout << "Source length: " << wld.sourcelength << endl;
-  cout << "Total units: " << wld.units.size() << endl;
+  //cout << "Running seed: " << runSeed << endl;
+  //cout << "Source length: " << wld.sourcelength << endl;
+  //cout << "Total units: " << wld.units.size() << endl;
 
 #if 0
 

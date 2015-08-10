@@ -1,0 +1,11 @@
+#!/bin/bash
+
+EXEC=./play_icfp2015
+API_TOKEN=Td/Cz+QybNRt/9poXn2R2W2WOLB9nYXtwwUlK+N5Erg=
+TEAM_ID=152
+
+for FILE in input/*json
+do
+  $EXEC -f $FILE -p ei!  > output/problem.out
+  curl --user :$API_TOKEN -X POST -H "Content-Type: application/json"  -d @output/problem.out https://davar.icfpcontest.org/teams/$TEAM_ID/solutions
+done
