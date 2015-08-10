@@ -8,9 +8,13 @@ Standard makefile, no arguments. Executable will be play_icfp2015.
 Takes the defined arguments, but largely ignores them. :^)
 Also has several debugging options for generating output, etc.
 
+Running ./submitAll will run the executable against all files in input and
+submit the outputs via curl.
 
 # Workitems
 - Incorporate phrases of power.
+ - Require going down after a phrase to avoid loops.
+ - Would need a rotational loop checker to use yuggoth. :^\
 - WBN to have smarter algorithms, but mostly out of time.
  - Ideally could farm out different strategies to subprocesses on
    multiple cores and pick the optimal. Give up after -t seconds, etc.

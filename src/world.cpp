@@ -8,6 +8,9 @@
 
 #include "parser.hpp"
 
+string pp[2] = { "ei!a", "ia! ia!a" };
+const int numpp = 2;
+
 void jsonHeader(ostream& out)
 {
   out << "[" << endl;
@@ -17,7 +20,7 @@ void jsonOutput(bool first, int id, int seed, string commands, ostream& out)
 {
   out << (first ? " " : ",") << " { \"problemId\": " << id << endl;
   out << "  , \"seed\": " << seed << endl;
-  out << "  , \"tag\": \"" << id << ":" << seed << "-2\"" << endl;
+  out << "  , \"tag\": \"" << id << ":" << seed << "-mark4\"" << endl;
   out << "  , \"solution\": \"" << commands << "\"" << endl;
   out << "  }" << endl;
 }
@@ -818,7 +821,7 @@ World::runAll()
     currentSource = 0;
 
     string commands;
-    commands += mark2();
+    commands += mark4();
 
     // Dump the output
     jsonOutput(first, id, seeds[rnum], commands, std::cout);
@@ -931,6 +934,231 @@ World::mark2()
               board.doAct(s_west);
               lastCmd = s_west;
               commands += 'a';
+            }
+          }
+        }
+      }
+
+      if (board.au == nullptr) {
+        break;
+      }
+    } while (!unitdone);
+  } while (!done);
+
+  return commands;
+}
+
+bool
+World::runString(string cmds, bool testOnly) {
+  Unit testUnit(activeUnit);
+
+  for (int cnt = 0; cnt < cmds.size(); cnt++) {
+    char cmdch = cmds[cnt];
+    act_cmd cmd = charToCmd(cmdch);
+    
+    switch(cmd) {
+      case east:
+        testUnit.e();
+        break;
+      case west:
+        testUnit.w();
+        break;
+      case s_east:
+        testUnit.se();
+        break;
+      case s_west:
+        testUnit.sw();
+        break;
+      case rotate_cw:
+        testUnit.rotate(true);
+        break;
+      case count_rotate:
+        testUnit.rotate(false);
+        break;
+      default:
+        return false;
+    }
+    if (!board.val(testUnit)) {
+      return false;
+    }
+  }
+
+  if (testOnly) {
+    return true;
+  }
+
+  // Everything checked out, so run the commands.
+  for (int cnt = 0; cnt < cmds.size(); cnt++) {
+    char cmdch = cmds[cnt];
+    act_cmd cmd = charToCmd(cmdch);
+    board.doAct(cmd);
+  }
+
+  return true;
+}
+
+string
+World::mark3()
+{
+  string commands;
+
+  // Run as many units as possible
+  bool done(false);
+  do {
+    if (!actNextUnit()) {
+      // Source is empty.
+      break;
+    }
+    if (!board.val(activeUnit)) {
+      // Board is full.
+      break;
+    }
+
+    act_cmd lastCmd = idle;
+    bool unitdone = false;
+    do {
+      if (stepDelay > 0) {
+        fstream outputfile("board.txt", ios_base::out);
+        board.print(outputfile);
+        outputfile.close();
+        usleep(stepDelay);
+      }
+
+      // First try to run 'ei!a' when possible.
+      // The extra a is to avoid loops.
+      if(runString("ei!a", false)) {
+        commands += "ei!a";
+        lastCmd = s_west;
+      } else {
+        Unit test(activeUnit);
+        test.se();
+        if (board.val(test)) {
+          board.doAct(s_east);
+          lastCmd = s_east;
+          commands += 'm';
+        } else {
+          test = activeUnit;
+          test.sw();
+          if (board.val(test)) {
+            board.doAct(s_west);
+            lastCmd = s_west;
+            commands += 'a';
+          } else {
+            test = activeUnit;
+            test.e();
+            if ((lastCmd != west) && (board.val(test))) {
+              board.doAct(east);
+              lastCmd = east;
+              commands += 'e';
+            } else {
+              test = activeUnit;
+              test.w();
+              if ((lastCmd != east) && (board.val(test))) {
+                board.doAct(west);
+                lastCmd = west;
+                commands += '0';
+              } else {
+                // Go SW to lock
+                board.doAct(s_west);
+                lastCmd = s_west;
+                commands += 'a';
+              }
+            }
+          }
+        }
+      }
+
+      if (board.au == nullptr) {
+        break;
+      }
+    } while (!unitdone);
+  } while (!done);
+
+  return commands;
+}
+
+int
+World::tryAllPP(int start)
+{
+  for (int cnt = 0; cnt < numpp; cnt++) {
+    int idx = (cnt + start) % numpp;
+    if (runString(pp[idx], false)) {
+      return idx;
+    }
+  }
+  return -1;
+}
+
+string
+World::mark4()
+{
+  string commands;
+  int nextpp = 0;
+
+  // Run as many units as possible
+  bool done(false);
+  do {
+    if (!actNextUnit()) {
+      // Source is empty.
+      break;
+    }
+    if (!board.val(activeUnit)) {
+      // Board is full.
+      break;
+    }
+
+    act_cmd lastCmd = idle;
+    bool unitdone = false;
+    do {
+      if (stepDelay > 0) {
+        fstream outputfile("board.txt", ios_base::out);
+        board.print(outputfile);
+        outputfile.close();
+        usleep(stepDelay);
+      }
+
+      // First try to run a phrase when possible.
+
+      nextpp++;
+      nextpp %= numpp;
+      int idx = tryAllPP(nextpp);
+      if (idx != -1) {
+        commands += pp[idx];
+        lastCmd = s_west;
+      } else {
+        Unit test(activeUnit);
+        test.se();
+        if (board.val(test)) {
+          board.doAct(s_east);
+          lastCmd = s_east;
+          commands += 'm';
+        } else {
+          test = activeUnit;
+          test.sw();
+          if (board.val(test)) {
+            board.doAct(s_west);
+            lastCmd = s_west;
+            commands += 'a';
+          } else {
+            test = activeUnit;
+            test.e();
+            if ((lastCmd != west) && (board.val(test))) {
+              board.doAct(east);
+              lastCmd = east;
+              commands += 'e';
+            } else {
+              test = activeUnit;
+              test.w();
+              if ((lastCmd != east) && (board.val(test))) {
+                board.doAct(west);
+                lastCmd = west;
+                commands += '0';
+              } else {
+                // Go SW to lock
+                board.doAct(s_west);
+                lastCmd = s_west;
+                commands += 'a';
+              }
             }
           }
         }

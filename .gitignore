@@ -33,5 +33,6 @@ play_icfp2015
 
 
 # Extra stuff
+*.tgz
 board.txt
 unit.txt

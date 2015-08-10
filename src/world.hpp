@@ -145,6 +145,12 @@ class World {
     void runAll();
     string mark1();
     string mark2();
+    bool runString(string cmds, bool testOnly);
+    // Always ie!a where possible
+    string mark3();
+    // Mark3 + rotate through words
+    int tryAllPP(int start);
+    string mark4();
 };
 
 #endif

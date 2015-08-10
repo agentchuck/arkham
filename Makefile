@@ -40,7 +40,7 @@ CXX = g++
 
 -include Makefile.local
 
-.PHONY: clean all depend
+.PHONY: clean all depend submit
 .SUFFIXES:
 obj/%.o: src/%.c
 	$(E)C-compiling $<
@@ -61,3 +61,7 @@ $(BINFILE): $(OFILES)
 clean:
 	$(E)Removing files
 	$(Q)rm -f $(BINFILE) obj/* Makefile.dep
+
+submit: clean
+	tar -czf arkham_hackers.tgz --exclude='*.swp' *
+
